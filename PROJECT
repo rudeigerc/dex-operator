@@ -1,0 +1,16 @@
+domain: rudeigerc.dev
+layout:
+- go.kubebuilder.io/v3
+projectName: dex-operator
+repo: github.com/rudeigerc/dex-operator
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: rudeigerc.dev
+  group: dex
+  kind: Client
+  path: github.com/rudeigerc/dex-operator/api/v1alpha1
+  version: v1alpha1
+version: "3"

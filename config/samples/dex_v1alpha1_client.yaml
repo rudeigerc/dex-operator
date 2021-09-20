@@ -1,0 +1,7 @@
+apiVersion: dex.rudeigerc.dev/v1alpha1
+kind: Client
+metadata:
+  name: client-sample
+spec:
+  # Add fields here
+  foo: bar
