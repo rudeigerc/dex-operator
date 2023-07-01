@@ -13,3 +13,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+
+package reconciler
+
+import (
+	"context"
+
+	ctrl "sigs.k8s.io/controller-runtime"
+
+	dexv1alpha1 "github.com/rudeigerc/dex-operator/api/v1alpha1"
+)
+
+type DexClusterReconciler interface {
+	Reconcile(ctx context.Context, dex *dexv1alpha1.DexCluster) (ctrl.Result, error)
+}

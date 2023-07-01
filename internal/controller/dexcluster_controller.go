@@ -1,5 +1,5 @@
 /*
-Copyright 2023.
+Copyright 2023 Yuchen Cheng.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,12 +19,16 @@ package controller
 import (
 	"context"
 
+	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/equality"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/klog/v2"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	dexv1alpha1 "github.com/rudeigerc/dex-operator/api/v1alpha1"
+	"github.com/rudeigerc/dex-operator/internal/reconciler"
 )
 
 // DexClusterReconciler reconciles a DexCluster object
@@ -33,24 +37,49 @@ type DexClusterReconciler struct {
 	Scheme *runtime.Scheme
 }
 
-//+kubebuilder:rbac:groups=dex.rudeigerc.dev,resources=dexclusters,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=dex.rudeigerc.dev,resources=dexclusters/status,verbs=get;update;patch
-//+kubebuilder:rbac:groups=dex.rudeigerc.dev,resources=dexclusters/finalizers,verbs=update
-
-// Reconcile is part of the main kubernetes reconciliation loop which aims to
-// move the current state of the cluster closer to the desired state.
-// TODO(user): Modify the Reconcile function to compare the state specified by
-// the DexCluster object against the actual cluster state, and then
-// perform operations to make the cluster state reflect the state specified by
-// the user.
-//
-// For more details, check Reconcile and its Result here:
-// - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.15.0/pkg/reconcile
+// +kubebuilder:rbac:groups=dex.rudeigerc.dev,resources=dexclusters,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=dex.rudeigerc.dev,resources=dexclusters/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=dex.rudeigerc.dev,resources=dexclusters/finalizers,verbs=update
 func (r *DexClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
+	var dexCluster dexv1alpha1.DexCluster
+	if err := r.Get(ctx, req.NamespacedName, &dexCluster); err != nil {
+		return ctrl.Result{}, client.IgnoreNotFound(err)
+	}
 
-	// TODO(user): your logic here
+	log := ctrl.LoggerFrom(ctx).WithValues("dexCluster", klog.KObj(&dexCluster))
+	ctx = ctrl.LoggerInto(ctx, log)
 
+	log.V(2).Info("Reconciling DexCluster")
+
+	var res ctrl.Result
+	var err error
+
+	configMapReconciler := reconciler.NewConfigMapReconciler(r.Client)
+	res, err = configMapReconciler.Reconcile(ctx, &dexCluster)
+	if err != nil {
+		return res, err
+	}
+
+	deploymentReconciler := reconciler.NewDeploymentReconciler(r.Client)
+	res, err = deploymentReconciler.Reconcile(ctx, &dexCluster)
+	if err != nil {
+		return res, err
+	}
+
+	serviceReconciler := reconciler.NewServiceReconciler(r.Client)
+	res, err = serviceReconciler.Reconcile(ctx, &dexCluster)
+	if err != nil {
+		return res, err
+	}
+
+	oldStatus := dexCluster.Status
+
+	if !equality.Semantic.DeepEqual(oldStatus, &dexCluster.Status) {
+		if err := r.Status().Update(ctx, &dexCluster); err != nil {
+			log.Error(err, "unable to update DexCluster status")
+			return ctrl.Result{}, err
+		}
+	}
 	return ctrl.Result{}, nil
 }
 
@@ -58,5 +87,8 @@ func (r *DexClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 func (r *DexClusterReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&dexv1alpha1.DexCluster{}).
+		Owns(&appsv1.Deployment{}).
+		Owns(&corev1.ConfigMap{}).
+		Owns(&corev1.Service{}).
 		Complete(r)
 }
