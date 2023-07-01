@@ -1,0 +1,12 @@
+apiVersion: dex.rudeigerc.dev/v1alpha1
+kind: DexCluster
+metadata:
+  labels:
+    app.kubernetes.io/name: dexcluster
+    app.kubernetes.io/instance: dexcluster-sample
+    app.kubernetes.io/part-of: dex-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: dex-operator
+  name: dexcluster-sample
+spec:
+  # TODO(user): Add fields here

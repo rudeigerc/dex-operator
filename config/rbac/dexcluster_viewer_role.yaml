@@ -1,0 +1,27 @@
+# permissions for end users to view dexclusters.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: dexcluster-viewer-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: dex-operator
+    app.kubernetes.io/part-of: dex-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: dexcluster-viewer-role
+rules:
+- apiGroups:
+  - dex.rudeigerc.dev
+  resources:
+  - dexclusters
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - dex.rudeigerc.dev
+  resources:
+  - dexclusters/status
+  verbs:
+  - get
