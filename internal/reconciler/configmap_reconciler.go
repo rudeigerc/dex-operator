@@ -40,7 +40,9 @@ func NewConfigMapReconciler(client client.Client) DexClusterReconciler {
 	}
 }
 
-// +kubebuilder:rbac:groups=core,resources=configmaps,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=core,resources=configmaps,verbs=get;list;watch;create;update;patch;delete
+
+// Reconcile ConfigMap.
 func (r *ConfigMapReconciler) Reconcile(ctx context.Context, dexCluster *dexv1alpha1.DexCluster) (ctrl.Result, error) {
 	log := log.FromContext(ctx)
 

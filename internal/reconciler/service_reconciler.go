@@ -39,7 +39,9 @@ func NewServiceReconciler(client client.Client) DexClusterReconciler {
 	}
 }
 
-// +kubebuilder:rbac:groups=core,resources=services,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=core,resources=services,verbs=get;list;watch;create;update;patch;delete
+
+// Reconcile Service.
 func (r *ServiceReconciler) Reconcile(ctx context.Context, dexCluster *dexv1alpha1.DexCluster) (ctrl.Result, error) {
 	log := log.FromContext(ctx)
 

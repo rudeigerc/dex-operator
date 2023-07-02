@@ -37,9 +37,11 @@ type DexClusterReconciler struct {
 	Scheme *runtime.Scheme
 }
 
-// +kubebuilder:rbac:groups=dex.rudeigerc.dev,resources=dexclusters,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=dex.rudeigerc.dev,resources=dexclusters/status,verbs=get;update;patch
-// +kubebuilder:rbac:groups=dex.rudeigerc.dev,resources=dexclusters/finalizers,verbs=update
+//+kubebuilder:rbac:groups=dex.rudeigerc.dev,resources=dexclusters,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=dex.rudeigerc.dev,resources=dexclusters/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=dex.rudeigerc.dev,resources=dexclusters/finalizers,verbs=update
+
+// Reconcile DexCluster.
 func (r *DexClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	var dexCluster dexv1alpha1.DexCluster
 	if err := r.Get(ctx, req.NamespacedName, &dexCluster); err != nil {

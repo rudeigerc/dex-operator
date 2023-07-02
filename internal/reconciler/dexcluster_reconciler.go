@@ -24,6 +24,8 @@ import (
 	dexv1alpha1 "github.com/rudeigerc/dex-operator/api/v1alpha1"
 )
 
+// DexClusterReconciler is the interface that all DexCluster reconcilers must implement.
 type DexClusterReconciler interface {
+	// Reconcile reconciles the resources.
 	Reconcile(ctx context.Context, dex *dexv1alpha1.DexCluster) (ctrl.Result, error)
 }
