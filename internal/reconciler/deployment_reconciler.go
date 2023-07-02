@@ -84,8 +84,8 @@ func (r *DeploymentReconciler) Reconcile(ctx context.Context, dexCluster *dexv1a
 func deploymentManifest(dexCluster *dexv1alpha1.DexCluster) *appsv1.Deployment {
 	deployment := &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
-			GenerateName: dexCluster.Name + "-",
-			Namespace:    dexCluster.Namespace,
+			Name:      dexCluster.Name,
+			Namespace: dexCluster.Namespace,
 			Labels: map[string]string{
 				"app.kubernetes.io/managed-by": "dex-operator",
 				"app.kubernetes.io/instance":   dexCluster.Name,
@@ -186,7 +186,7 @@ func containerManifest(dexCluster *dexv1alpha1.DexCluster) corev1.Container {
 func GetDeployment(dexCluster *dexv1alpha1.DexCluster, scheme *runtime.Scheme) *appsv1.Deployment {
 	config := &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      fmt.Sprintf("%s-deployment", dexCluster.Name),
+			Name:      dexCluster.Name,
 			Namespace: dexCluster.Namespace,
 		},
 	}

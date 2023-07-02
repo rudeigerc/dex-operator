@@ -1,4 +1,4 @@
-# Dex Operator
+# Dex Operator for Kubernetes
 
 Dex operator is a Kubernetes operator for [Dex](https://dexidp.io/), an identity service that uses OpenID Connect to drive authentication for other apps.
 
