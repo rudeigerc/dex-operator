@@ -27,3 +27,10 @@ Dockerfile.cross
 .vscode
 
 testdir
+
+# docs
+
+node_modules
+
+**/.vitepress/cache
+**/.vitepress/dist
