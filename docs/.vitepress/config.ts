@@ -6,6 +6,7 @@ const description =
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
+  base: "/dex-operator/",
   title: title,
   description: description,
   lastUpdated: true,
